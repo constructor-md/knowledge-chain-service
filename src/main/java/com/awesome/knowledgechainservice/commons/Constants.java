@@ -2,8 +2,10 @@ package com.awesome.knowledgechainservice.commons;
 
 public class Constants {
 
+    public static final String SERVICE_NAME = "KNOWLEDGE_CHAIN";
+
     // TOKEN Redis Key前缀
-    public static final String REDIS_ACCESS_TOKEN_PREFIX = "ACCESS_TOKEN::";
+    public static final String REDIS_ACCESS_TOKEN_PREFIX = "ACCESS_TOKEN::" + SERVICE_NAME  + "::";
 
     // 硅基流动文本对话URL
     public static final String SILICON_FLOW_CHAT_URL = "SILICON_FLOW_CHAT_URL";

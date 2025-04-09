@@ -10,6 +10,8 @@ public enum ErrorCode {
     NOT_LOGIN_ERROR(600502, "未登录"),
     OPERATOR_ERROR(600503, "操作失败"),
     REQUEST_LIMITED(600504, "请求频率限制中"),
+    USERNAME_EXIST(600505, "用户名重复"),
+    NOT_REGISTER(600506, "未注册"),
 
     ;
 
