@@ -1,4 +1,4 @@
-package com.awesome.kuibuservice.exception;
+package com.awesome.knowledgechainservice.exception;
 
 import lombok.Getter;
 

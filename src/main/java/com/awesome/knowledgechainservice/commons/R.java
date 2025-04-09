@@ -1,8 +1,8 @@
-package com.awesome.kuibuservice.commons;
+package com.awesome.knowledgechainservice.commons;
 
 
-import com.awesome.kuibuservice.exception.BusinessException;
-import com.awesome.kuibuservice.exception.ErrorCode;
+import com.awesome.knowledgechainservice.exception.BusinessException;
+import com.awesome.knowledgechainservice.exception.ErrorCode;
 import lombok.Data;
 
 @Data

@@ -1,7 +1,7 @@
-package com.awesome.kuibuservice.exception;
+package com.awesome.knowledgechainservice.exception;
 
 
-import com.awesome.kuibuservice.commons.R;
+import com.awesome.knowledgechainservice.commons.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

@@ -1,4 +1,4 @@
-package com.awesome.kuibuservice.exception;
+package com.awesome.knowledgechainservice.exception;
 
 /**
  * 类似断言，简化抛异常代码工具
