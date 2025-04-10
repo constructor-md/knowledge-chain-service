@@ -33,12 +33,15 @@ public class UserController {
     }
 
 
+    /**
+     * 返回是否具备知识库编辑权限
+     * 目前仅admin用户可修改
+     */
     @GetMapping("/auth")
     @Login
-    public R<?> auth() {
+    public R<Boolean> auth() {
         UserInfo userInfo = UserInfoContext.get();
-        log.info("user: {}", userInfo.getUsername());
-        return R.ok();
+        return R.ok("admin".equals(userInfo.getUsername()));
     }
 
 
