@@ -40,8 +40,7 @@ public class UserController {
     @GetMapping("/auth")
     @Login
     public R<Boolean> auth() {
-        UserInfo userInfo = UserInfoContext.get();
-        return R.ok("admin".equals(userInfo.getUsername()));
+        return R.ok(userInfoService.isAdmin());
     }
 
 

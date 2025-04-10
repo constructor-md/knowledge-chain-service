@@ -1,6 +1,7 @@
 package com.awesome.knowledgechainservice.service.impl;
 
 import cn.hutool.crypto.digest.MD5;
+import com.awesome.knowledgechainservice.aop.UserInfoContext;
 import com.awesome.knowledgechainservice.commons.Constants;
 import com.awesome.knowledgechainservice.exception.BusinessException;
 import com.awesome.knowledgechainservice.exception.ErrorCode;
@@ -67,6 +68,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         String token = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(Constants.REDIS_ACCESS_TOKEN_PREFIX + token, userInfo.getId(), 1, TimeUnit.DAYS);
         return token;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        UserInfo userInfo = UserInfoContext.get();
+        return "admin".equals(userInfo.getUsername());
     }
 }
 

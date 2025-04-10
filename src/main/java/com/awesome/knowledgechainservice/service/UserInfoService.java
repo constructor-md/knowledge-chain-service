@@ -15,5 +15,7 @@ public interface UserInfoService extends IService<UserInfo> {
 
     String login(LoginRequest loginRequest);
 
+    boolean isAdmin();
+
 
 }

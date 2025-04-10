@@ -12,6 +12,7 @@ public enum ErrorCode {
     REQUEST_LIMITED(600504, "请求频率限制中"),
     USERNAME_EXIST(600505, "用户名重复"),
     NOT_REGISTER(600506, "未注册"),
+    FORBIDDEN_ERROR(600507, "权限不足，禁止访问"),
 
     ;
 
