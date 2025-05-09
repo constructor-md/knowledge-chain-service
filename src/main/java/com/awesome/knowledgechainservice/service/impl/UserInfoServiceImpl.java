@@ -57,13 +57,19 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     public String login(LoginRequest loginRequest) {
         // 加密密码
         String password = MD5.create().digestHex(loginRequest.getPassword());
+        // 检查用户名
+        UserInfo check = this.baseMapper
+                .selectOne(new QueryWrapper<UserInfo>()
+                        .lambda()
+                        .eq(UserInfo::getUsername, loginRequest.getUsername()));
+        ThrowUtils.throwIf(check == null, new BusinessException(ErrorCode.NOT_REGISTER));
+        ThrowUtils.throwIf(!password.equals(check.getPassword()), new BusinessException(ErrorCode.PASSWD_ERROR));
         // 检查用户名密码
         UserInfo userInfo = this.baseMapper
                 .selectOne(new QueryWrapper<UserInfo>()
                         .lambda()
                         .eq(UserInfo::getUsername, loginRequest.getUsername())
                         .eq(UserInfo::getPassword, password));
-        ThrowUtils.throwIf(userInfo == null, new BusinessException(ErrorCode.NOT_REGISTER));
         // 生成token
         String token = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(Constants.REDIS_ACCESS_TOKEN_PREFIX + token, userInfo.getId(), 1, TimeUnit.DAYS);

@@ -1,10 +1,8 @@
 package com.awesome.knowledgechainservice.controller;
 
 import com.awesome.knowledgechainservice.annotation.Login;
-import com.awesome.knowledgechainservice.aop.UserInfoContext;
 import com.awesome.knowledgechainservice.commons.R;
 import com.awesome.knowledgechainservice.model.LoginRequest;
-import com.awesome.knowledgechainservice.model.entity.UserInfo;
 import com.awesome.knowledgechainservice.service.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

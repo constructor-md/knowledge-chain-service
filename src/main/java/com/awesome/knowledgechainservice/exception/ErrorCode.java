@@ -13,6 +13,8 @@ public enum ErrorCode {
     USERNAME_EXIST(600505, "用户名重复"),
     NOT_REGISTER(600506, "未注册"),
     FORBIDDEN_ERROR(600507, "权限不足，禁止访问"),
+    PASSWD_ERROR(600508, "密码错误"),
+    NOT_FOUND(600509, "找不到数据"),
 
     ;
 
