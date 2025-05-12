@@ -1,18 +1,19 @@
 package com.awesome.knowledgechainservice.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.awesome.knowledgechainservice.commons.Constants;
 import com.awesome.knowledgechainservice.exception.BusinessException;
 import com.awesome.knowledgechainservice.exception.ErrorCode;
+import com.awesome.knowledgechainservice.exception.ThrowUtils;
 import com.awesome.knowledgechainservice.mapper.KnowledgeInfoMapper;
 import com.awesome.knowledgechainservice.model.dto.KnowledgePointInfoDto;
+import com.awesome.knowledgechainservice.model.dto.KnowledgePointSearchDto;
 import com.awesome.knowledgechainservice.model.dto.ai.SiliconFlowRequest;
 import com.awesome.knowledgechainservice.model.dto.ai.SiliconFlowResponse;
 import com.awesome.knowledgechainservice.model.entity.KnowledgeInfo;
 import com.awesome.knowledgechainservice.model.entity.SysConfig;
-import com.awesome.knowledgechainservice.service.AnswerInfoService;
-import com.awesome.knowledgechainservice.service.KnowledgeBaseInfoService;
-import com.awesome.knowledgechainservice.service.KnowledgeInfoService;
-import com.awesome.knowledgechainservice.service.SysConfigService;
+import com.awesome.knowledgechainservice.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.context.annotation.Lazy;
@@ -25,9 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +50,9 @@ public class KnowledgeInfoServiceImpl extends ServiceImpl<KnowledgeInfoMapper, K
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private KnowledgePointRelationService knowledgeRelationService;
 
     @Override
     @Transactional
@@ -86,17 +88,24 @@ public class KnowledgeInfoServiceImpl extends ServiceImpl<KnowledgeInfoMapper, K
         if (!exists) {
             knowledgeBaseInfoService.removeById(knowledgeInfo.getKbId());
         }
+        // 删除节点关联的关系
+        knowledgeRelationService.deleteRelations(Collections.singletonList(id));
     }
 
     @Override
     @Transactional
     public void deleteByKbId(Long id) {
+        List<KnowledgeInfo> knowledgeInfoList = this.lambdaQuery()
+                .eq(KnowledgeInfo::getKbId, id).list();
         baseMapper.delete(new QueryWrapper<KnowledgeInfo>().lambda().eq(KnowledgeInfo::getKbId, id));
+        List<Long> ids = knowledgeInfoList.stream()
+                .map(KnowledgeInfo::getId).collect(Collectors.toList());
+        knowledgeRelationService.deleteRelations(ids);
     }
 
     private static final String SYSTEM_PROMPT = "" +
             "我会给你一段markdown格式的文本，它描述的是某个领域的某个知识点。" +
-            "我需要你根据我发给你的知识点，基于让我充分掌握这个知识的目的，给我出一道主观题。" +
+            "我需要你根据我发给你的知识点，基于让我充分掌握这个知识的目的，给我出一道问答题。" +
             "你发给我的也应该是纯文本，并且不要多余的修饰，仅包含问题本身即可。" +
             "我希望通过回答这个问题，能够充分掌握这个知识点。";
 
@@ -150,6 +159,43 @@ public class KnowledgeInfoServiceImpl extends ServiceImpl<KnowledgeInfoMapper, K
             e.printStackTrace();
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "硅基流动接口调用异常");
         }
+    }
+
+    @Override
+    public List<KnowledgePointSearchDto> search(Long nowId, String keywords) {
+        // 获取当前节点的关联节点列表
+        Set<Long> relatedIdList = new HashSet<>(knowledgeRelationService
+                .findRelatedKnowledgePointList(nowId));
+
+        KnowledgeInfo knowledgeInfo = this.lambdaQuery()
+                .eq(KnowledgeInfo::getId, nowId).one();
+        ThrowUtils.throwIf(knowledgeInfo == null, new BusinessException(ErrorCode.NOT_FOUND));
+
+        // 如果 keywords 为空，返回关联节点列表
+        List<KnowledgeInfo> knowledgeInfoList = new ArrayList<>();
+        if (StrUtil.isBlank(keywords)) {
+            if (CollectionUtil.isNotEmpty(relatedIdList)) {
+                knowledgeInfoList = this.lambdaQuery()
+                        .in(KnowledgeInfo::getId, relatedIdList)
+                        .eq(KnowledgeInfo::getKbId, knowledgeInfo.getKbId())
+                        .list();
+            }
+        } else {
+            // 查询关键词相关知识点信息列表 排除当前节点
+            knowledgeInfoList = this.lambdaQuery()
+                    .like(KnowledgeInfo::getTitle, keywords)
+                    .eq(KnowledgeInfo::getKbId, knowledgeInfo.getKbId())
+                    .list().stream()
+                    .filter(n -> !Objects.equals(n.getId(), nowId)).collect(Collectors.toList());
+        }
+
+        // 设置相关关系
+        if (CollectionUtil.isNotEmpty(knowledgeInfoList)) {
+            return knowledgeInfoList.stream()
+                    .map(k -> KnowledgePointSearchDto.transferDto(k, relatedIdList))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 }
 

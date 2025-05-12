@@ -14,7 +14,7 @@ public class KnowledgePageInfoDto {
     private String question;
     private String answer;
     private String evaluation;
-    private int score;
+    private Integer score;
 
     public static KnowledgePageInfoDto transferDto(KnowledgeInfo knowledgeInfo) {
         KnowledgePageInfoDto knowledgePageInfoDto = new KnowledgePageInfoDto();

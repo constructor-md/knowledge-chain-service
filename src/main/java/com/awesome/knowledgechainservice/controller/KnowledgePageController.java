@@ -4,7 +4,6 @@ import com.awesome.knowledgechainservice.annotation.Auth;
 import com.awesome.knowledgechainservice.annotation.Login;
 import com.awesome.knowledgechainservice.aop.UserInfoContext;
 import com.awesome.knowledgechainservice.commons.R;
-import com.awesome.knowledgechainservice.model.dto.AnswerDto;
 import com.awesome.knowledgechainservice.model.dto.KnowledgePageInfoDto;
 import com.awesome.knowledgechainservice.model.entity.AnswerInfo;
 import com.awesome.knowledgechainservice.model.entity.KnowledgeInfo;
@@ -43,9 +42,11 @@ public class KnowledgePageController {
                 .eq(AnswerInfo::getKId, id)
                 .eq(AnswerInfo::getUserId, UserInfoContext.get().getId())
                 .one();
-        knowledgePageInfoDto.setAnswer(answerInfo.getAnswer());
-        knowledgePageInfoDto.setEvaluation(answerInfo.getEvaluation());
-        knowledgePageInfoDto.setScore(answerInfo.getScore());
+        if (answerInfo != null) {
+            knowledgePageInfoDto.setAnswer(answerInfo.getAnswer());
+            knowledgePageInfoDto.setEvaluation(answerInfo.getEvaluation());
+            knowledgePageInfoDto.setScore(answerInfo.getScore());
+        }
         return R.ok(knowledgePageInfoDto);
     }
 
@@ -70,8 +71,7 @@ public class KnowledgePageController {
     @Auth
     @PutMapping("/question")
     public R<String> generateQuestionByAI(@RequestParam("id") String id) {
-        String question = knowledgeInfoService.generateQuestionByAI(Long.valueOf(id));
-        return R.ok(question);
+        return R.ok(knowledgeInfoService.generateQuestionByAI(Long.valueOf(id)));
     }
 
 }

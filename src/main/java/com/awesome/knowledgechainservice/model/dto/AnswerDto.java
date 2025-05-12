@@ -6,8 +6,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class AnswerDto {
+    private String id;
     private String answer;
-    private String kId;
     private String evaluation;
     private Integer score;
     private Long userId;

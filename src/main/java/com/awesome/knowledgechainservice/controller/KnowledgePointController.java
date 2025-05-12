@@ -4,6 +4,7 @@ import com.awesome.knowledgechainservice.annotation.Auth;
 import com.awesome.knowledgechainservice.annotation.Login;
 import com.awesome.knowledgechainservice.commons.R;
 import com.awesome.knowledgechainservice.model.dto.KnowledgePointInfoDto;
+import com.awesome.knowledgechainservice.model.dto.KnowledgePointSearchDto;
 import com.awesome.knowledgechainservice.model.entity.KnowledgeInfo;
 import com.awesome.knowledgechainservice.service.KnowledgeInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,18 @@ public class KnowledgePointController {
         Long kId = Long.valueOf(id);
         knowledgeInfoService.delete(kId);
         return R.ok();
+    }
+
+    /**
+     * 简要信息查询
+     * 根据关键词查询相关知识点
+     * 每个知识点包含是否与id建立联系的字段
+     */
+    @GetMapping("/relation/list")
+    @Login
+    public R<List<KnowledgePointSearchDto>> search(@RequestParam("id") String nowId,
+                                                   @RequestParam("keywords") String keywords) {
+        return R.ok(knowledgeInfoService.search(Long.valueOf(nowId), keywords));
     }
 
 }

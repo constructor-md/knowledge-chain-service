@@ -1,6 +1,7 @@
 package com.awesome.knowledgechainservice.service;
 
 import com.awesome.knowledgechainservice.model.dto.KnowledgePointInfoDto;
+import com.awesome.knowledgechainservice.model.dto.KnowledgePointSearchDto;
 import com.awesome.knowledgechainservice.model.entity.KnowledgeInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,5 +23,7 @@ public interface KnowledgeInfoService extends IService<KnowledgeInfo> {
     void deleteByKbId(Long id);
 
     String generateQuestionByAI(Long id);
+
+    List<KnowledgePointSearchDto> search(Long nowId, String keywords);
 
 }

@@ -10,13 +10,17 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 /**
-* @author 82611
-* @description 针对表【answer_info】的数据库操作Service
-* @createDate 2025-04-09 16:15:31
-*/
+ * @author 82611
+ * @description 针对表【answer_info】的数据库操作Service
+ * @createDate 2025-04-09 16:15:31
+ */
 public interface AnswerInfoService extends IService<AnswerInfo> {
 
+    AnswerInfo queryByKIdAndUserId(Long kId, Long userId);
+
     void submit(AnswerDto answerDto);
+
+    void updateEvaluationAndScore(Long kId, Long userId, String evaluation, Integer score);
 
     void deleteByKId(Long kId);
 
