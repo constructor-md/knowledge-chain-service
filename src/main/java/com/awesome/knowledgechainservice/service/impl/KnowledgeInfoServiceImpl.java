@@ -2,7 +2,9 @@ package com.awesome.knowledgechainservice.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.awesome.knowledgechainservice.annotation.DataSource;
 import com.awesome.knowledgechainservice.commons.Constants;
+import com.awesome.knowledgechainservice.config.datasource.DataSourceContextHolder;
 import com.awesome.knowledgechainservice.exception.BusinessException;
 import com.awesome.knowledgechainservice.exception.ErrorCode;
 import com.awesome.knowledgechainservice.exception.ThrowUtils;
@@ -162,6 +164,7 @@ public class KnowledgeInfoServiceImpl extends ServiceImpl<KnowledgeInfoMapper, K
     }
 
     @Override
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public List<KnowledgePointSearchDto> search(Long nowId, String keywords) {
         // 获取当前节点的关联节点列表
         Set<Long> relatedIdList = new HashSet<>(knowledgeRelationService

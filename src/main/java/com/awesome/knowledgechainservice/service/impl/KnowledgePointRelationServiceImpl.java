@@ -1,6 +1,8 @@
 package com.awesome.knowledgechainservice.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.awesome.knowledgechainservice.annotation.DataSource;
+import com.awesome.knowledgechainservice.config.datasource.DataSourceContextHolder;
 import com.awesome.knowledgechainservice.mapper.KnowledgePointRelationMapper;
 import com.awesome.knowledgechainservice.model.dto.util.UndirectedConnection;
 import com.awesome.knowledgechainservice.model.entity.KnowledgePointRelation;
@@ -26,6 +28,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 创建无向关系
     @Override
     @Transactional
+    @DataSource
     public void createRelation(UndirectedConnection<Long, Long> undirectedConnection) {
         // 不存在关系才添加
         if (!relationExist(undirectedConnection)) {
@@ -42,6 +45,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 删除无向关系（双向删除）
     @Override
     @Transactional
+    @DataSource
     public void deleteRelation(UndirectedConnection<Long, Long> undirectedConnection) {
         // 存在关系才删除
         if (relationExist(undirectedConnection)) {
@@ -59,6 +63,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 返回指定知识点ID列表中所有关联关系（无向且去重）
     @Override
     @Transactional
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public List<String[]> findAllRelationsBetweenNodes(List<Long> ids) {
         if (CollectionUtil.isEmpty(ids)) {
             return new ArrayList<>();
@@ -77,6 +82,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 查找与指定节点ID有关的节点ID列表
     @Override
     @Transactional
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public Set<Long> findRelatedKnowledgePointList(Long id) {
         List<String[]> connections = findAllRelationsBetweenNodes(Collections.singletonList(id));
         if (CollectionUtil.isEmpty(connections)) {
@@ -92,6 +98,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 删除指定节点的全部关系
     @Override
     @Transactional
+    @DataSource
     public void deleteRelations(List<Long> ids) {
         if (CollectionUtil.isNotEmpty(ids)) {
             baseMapper.delete(new QueryWrapper<KnowledgePointRelation>()
@@ -106,6 +113,7 @@ public class KnowledgePointRelationServiceImpl extends ServiceImpl<KnowledgePoin
     // 判断无向关系是否存在
     @Override
     @Transactional
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public boolean relationExist(UndirectedConnection<Long, Long> undirectedConnection) {
         return baseMapper.existsRelation(undirectedConnection.getU(), undirectedConnection.getV());
     }

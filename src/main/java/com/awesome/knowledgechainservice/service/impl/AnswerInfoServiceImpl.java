@@ -2,9 +2,11 @@ package com.awesome.knowledgechainservice.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.awesome.knowledgechainservice.annotation.DataSource;
 import com.awesome.knowledgechainservice.aop.UserInfoContext;
 import com.awesome.knowledgechainservice.commons.Constants;
 import com.awesome.knowledgechainservice.commons.R;
+import com.awesome.knowledgechainservice.config.datasource.DataSourceContextHolder;
 import com.awesome.knowledgechainservice.exception.BusinessException;
 import com.awesome.knowledgechainservice.exception.ErrorCode;
 import com.awesome.knowledgechainservice.exception.ThrowUtils;
@@ -55,6 +57,7 @@ public class AnswerInfoServiceImpl extends ServiceImpl<AnswerInfoMapper, AnswerI
 
     @Override
     @Transactional
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public AnswerInfo queryByKIdAndUserId(Long kId, Long userId) {
         return this.lambdaQuery()
                 .eq(AnswerInfo::getKId, kId)
@@ -63,6 +66,7 @@ public class AnswerInfoServiceImpl extends ServiceImpl<AnswerInfoMapper, AnswerI
 
     @Override
     @Transactional
+    @DataSource
     public void submit(AnswerDto answerDto) {
         AnswerInfo answerInfo = queryByKIdAndUserId(Long.valueOf(answerDto.getId()), answerDto.getUserId());
         if (answerInfo == null) {
@@ -85,6 +89,7 @@ public class AnswerInfoServiceImpl extends ServiceImpl<AnswerInfoMapper, AnswerI
 
     @Override
     @Transactional
+    @DataSource
     public void updateEvaluationAndScore(Long kId, Long userId, String evaluation, Integer score) {
         AnswerInfo answerInfo = queryByKIdAndUserId(kId, userId);
         answerInfo.setEvaluation(evaluation);
@@ -93,11 +98,13 @@ public class AnswerInfoServiceImpl extends ServiceImpl<AnswerInfoMapper, AnswerI
     }
 
     @Override
+    @DataSource
     public void deleteByKId(Long kId) {
         baseMapper.delete(new QueryWrapper<AnswerInfo>().lambda().eq(AnswerInfo::getKId, kId));
     }
 
     @Override
+    @DataSource
     public void deleteByKIdList(List<Long> kIdList) {
         baseMapper.delete(new QueryWrapper<AnswerInfo>().lambda().in(AnswerInfo::getKId, kIdList));
     }
@@ -223,6 +230,7 @@ public class AnswerInfoServiceImpl extends ServiceImpl<AnswerInfoMapper, AnswerI
     }
 
     @Override
+    @DataSource(value = DataSourceContextHolder.SALVE)
     public Integer getScore(Long id) {
         // 查询用户对该知识点回答的AI评分
         AnswerInfo answerInfo = this.lambdaQuery()

@@ -1,6 +1,7 @@
 package com.awesome.knowledgechainservice.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.awesome.knowledgechainservice.annotation.DataSource;
 import com.awesome.knowledgechainservice.mapper.KnowledgeBaseInfoMapper;
 import com.awesome.knowledgechainservice.model.dto.KnowledgePointInfoDto;
 import com.awesome.knowledgechainservice.model.entity.KnowledgeBaseInfo;
@@ -34,6 +35,7 @@ public class KnowledgeBaseInfoServiceImpl extends ServiceImpl<KnowledgeBaseInfoM
 
     @Override
     @Transactional
+    @DataSource
     public KnowledgeBaseInfo addKnowledgeBaseInfo(String name) {
 
         // 新增知识库
@@ -57,6 +59,7 @@ public class KnowledgeBaseInfoServiceImpl extends ServiceImpl<KnowledgeBaseInfoM
 
     @Override
     @Transactional
+    @DataSource
     public boolean deleteKnowledgeBaseInfo(Long id) {
 
         List<KnowledgeInfo> knowledgeInfoList = knowledgeInfoService
