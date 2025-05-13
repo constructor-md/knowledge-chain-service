@@ -124,7 +124,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.awesome.knowledgechainservice.KnowledgeChainServiceApplication</mainClass>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>
